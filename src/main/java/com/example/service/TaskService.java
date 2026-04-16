@@ -153,6 +153,20 @@ public class TaskService {
     public void delete(Long id) {
         repo.deleteById(id);
     }
+ // =========================
+ // ADMIN: GET TASKS BY USER ID
+ // =========================
+ public List<TaskDTO> getTasksByUserId(Long userId) {
+
+     // Optional: validate user exists
+     userRepo.findById(userId)
+             .orElseThrow(() -> new RuntimeException("User not found"));
+
+     return repo.findByAssignedToId(userId)
+             .stream()
+             .map(this::convertToDTO)
+             .collect(Collectors.toList());
+ }
 
     // =========================
     // USER: GET OWN TASKS

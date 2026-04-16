@@ -47,6 +47,12 @@ public class TaskController {
     public TaskDTO getById(@PathVariable Long id) {
         return service.getById(id);
     }
+    
+ // ✅ ADMIN: Get tasks by user ID
+    @GetMapping("/admin/user/{userId}")
+    public List<TaskDTO> getTasksByUserId(@PathVariable Long userId) {
+        return service.getTasksByUserId(userId);
+    }
 
     // =========================
     // 👤 USER APIs (SECURE)
