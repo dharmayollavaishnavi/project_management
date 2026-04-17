@@ -10,6 +10,8 @@ import com.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TaskUpdateService {
 
@@ -39,11 +41,10 @@ public class TaskUpdateService {
         }
 
         // =========================
-        // ✅ NEW VALIDATION LOGIC
+        // ✅ VALIDATION LOGIC
         // =========================
         String status = update.getStatus().toUpperCase();
 
-        // 🚫 TO_DO → no progress allowed
         if ("TO_DO".equals(status)) {
             if (update.getCompletionPercentage() != null ||
                 update.getPendingPercentage() != null ||
@@ -53,7 +54,6 @@ public class TaskUpdateService {
             }
         }
 
-        // ✅ IN_PROGRESS → all fields required
         if ("IN_PROGRESS".equals(status)) {
             if (update.getCompletionPercentage() == null ||
                 update.getPendingPercentage() == null ||
@@ -63,7 +63,6 @@ public class TaskUpdateService {
             }
         }
 
-        // ✅ DONE → must be 100%
         if ("DONE".equals(status)) {
             if (update.getCompletionPercentage() == null ||
                 update.getCompletionPercentage() != 100) {
@@ -78,7 +77,6 @@ public class TaskUpdateService {
             }
         }
 
-        // 🔥 BONUS VALIDATION (recommended)
         if (update.getCompletionPercentage() != null &&
             update.getPendingPercentage() != null &&
             update.getCompletionPercentage() + update.getPendingPercentage() != 100) {
@@ -87,13 +85,13 @@ public class TaskUpdateService {
         }
 
         // =========================
-        // ✅ UPDATE MAIN TASK STATUS
+        // ✅ UPDATE TASK
         // =========================
         task.setStatus(status);
         taskRepo.save(task);
 
         // =========================
-        // ✅ SAVE TASK UPDATE
+        // ✅ SAVE UPDATE
         // =========================
         update.setTask(task);
         update.setUpdatedBy(user);
@@ -101,13 +99,27 @@ public class TaskUpdateService {
         TaskUpdate savedUpdate = repo.save(update);
 
         // =========================
-        // 📧 SEND EMAIL TO ADMIN
+        // 📧 SEND EMAIL TO ADMINS
+        // =========================
+        List<User> admins = userRepo.findByRole("ADMIN");
+
+        for (User admin : admins) {
+            emailService.sendEmail(
+                admin.getEmail(),
+                "Task Updated",
+                "Task: " + task.getTitle() +
+                "\nUpdated by: " + user.getEmail() +
+                "\nStatus: " + status
+            );
+        }
+
+        // =========================
+        // 📧 SEND CONFIRMATION TO USER
         // =========================
         emailService.sendEmail(
-            "admin@gmail.com",   // ⚠️ replace later with DB fetch
-            "Task Updated",
-            "Task: " + task.getTitle() +
-            "\nUpdated by: " + user.getEmail() +
+            user.getEmail(),
+            "Task Update Submitted",
+            "You updated task: " + task.getTitle() +
             "\nStatus: " + status
         );
 
