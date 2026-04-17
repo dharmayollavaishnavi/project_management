@@ -27,6 +27,9 @@ public class TaskService {
 
     @Autowired
     private UserRepository userRepo;
+    
+    @Autowired
+    private EmailService emailService;
 
     // =========================
     // VALID STATUS
@@ -87,7 +90,18 @@ public class TaskService {
         t.setCreatedAt(LocalDateTime.now());
         t.setUpdatedAt(LocalDateTime.now());
 
-        return convertToDTO(repo.save(t));
+        Task savedTask = repo.save(t);
+
+     // 📧 SEND EMAIL TO USER
+     emailService.sendEmail(
+         user.getEmail(),
+         "New Task Assigned",
+         "Task: " + savedTask.getTitle() +
+         "\nProject: " + project.getName() +
+         "\nDeadline: " + savedTask.getDeadline()
+     );
+
+     return convertToDTO(savedTask);
     }
 
     // =========================

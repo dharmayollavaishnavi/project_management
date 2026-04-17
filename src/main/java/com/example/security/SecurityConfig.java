@@ -37,6 +37,7 @@ public class SecurityConfig {
             		.requestMatchers("/tasks/admin/**").hasRole("ADMIN")
 
             		.requestMatchers("/tasks/user/**").hasAnyRole("USER", "ADMIN")
+            		.requestMatchers("/task-updates/**").hasAnyRole("USER", "ADMIN")
 
             		.anyRequest().authenticated()
             )
