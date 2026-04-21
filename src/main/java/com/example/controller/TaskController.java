@@ -21,42 +21,46 @@ public class TaskController {
     // =========================
     // 🔐 ADMIN APIs
     // =========================
-
+    
+   // admin creates task
     @PostMapping("/admin")
     public TaskDTO create(@RequestBody Task t) {
         return service.create(t);
     }
-
+    
+    //admin update task by task id
     @PutMapping("/admin/{id}")
     public TaskDTO update(@PathVariable Long id, @RequestBody Task t) {
         return service.update(id, t);
     }
 
+    //admin deletes task by task id
     @DeleteMapping("/admin/{id}")
     public String delete(@PathVariable Long id) {
         service.delete(id);
         return "Deleted successfully";
     }
 
+    //admin views all tasks
     @GetMapping("/admin")
     public List<TaskDTO> getAll() {
         return service.getAll();
     }
 
+    //admin views all tasks by task id
     @GetMapping("/admin/{id}")
     public TaskDTO getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
-    // ✅ ADMIN: Get tasks by user ID
+    // admin get tasks by user ID
     @GetMapping("/admin/user/{userId}")
     public List<TaskDTO> getTasksByUserId(@PathVariable Long userId) {
         return service.getTasksByUserId(userId);
     }
 
-    // =========================
-    // 🔍 ADMIN: SEARCH & FILTER
-    // =========================
+    // admin search task by status, priority, title(search & filter)
+ 
     @GetMapping("/admin/search")
     public List<TaskDTO> searchTasks(
             @RequestParam(required = false) String status,

@@ -33,7 +33,7 @@ public class UserController {
     }
 
     // =========================
-    // ✏️ UPDATE USER (ADMIN ONLY)
+    // ✏️ UPDATE USER BY ID (ADMIN ONLY)
     // =========================
     @PutMapping("/{id}")
     public User update(@PathVariable Long id, @RequestBody User user) {
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     // =========================
-    // ❌ DELETE USER (ADMIN ONLY)
+    // ❌ DELETE USER BY ID(ADMIN ONLY)
     // =========================
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
